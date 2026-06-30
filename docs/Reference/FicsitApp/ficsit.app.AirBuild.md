@@ -1,4 +1,4 @@
-# <img src="https://github.com/majormer/AirBuild/blob/main/Content/AirBuild.png?raw=true" width="150" alt="Air Build Logo"> Air Build
+# <img src="https://github.com/majormer/AirBuild/blob/main/images/AirBuild.png?raw=true" width="150" alt="Air Build Logo"> Air Build
 
 ![Status](https://img.shields.io/badge/Status-Released-brightgreen) ![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![Satisfactory](https://img.shields.io/badge/Satisfactory-1.2-blue) ![Engine](https://img.shields.io/badge/Engine-UE%205.6-blue) ![SML](https://img.shields.io/badge/SML-3.12-blue) ![Multiplayer](https://img.shields.io/badge/Multiplayer-Supported-brightgreen) ![AI Assisted Development Used](https://img.shields.io/badge/AI%20Assisted%20Development%20Used-Disclosure%20Below-blue)
 
@@ -61,6 +61,7 @@ There is **one deliberate exception**: the *"Surface is too uneven!"* floor chec
 While air placement is engaged, an **on-screen indicator** shows:
 
 - **Distance** — how far the building is from the player.
+- **Height** — its altitude in the world (absolute height).
 - **Ground** — its height above the ground directly below it.
 - **Reach** — the current reach setting.
 
@@ -114,7 +115,7 @@ Air Build settings live in-game under **Mod Settings → Air Build**, in two sec
 
 | Setting | Default | Description |
 |---|---|---|
-| Show Indicator | On | Shows the Distance / Ground / Reach readout while air placement is engaged. |
+| Show Indicator | On | Shows the Distance / Height / Ground / Reach readout while air placement is engaged. |
 | Position X | — | Horizontal screen position of the indicator. |
 | Position Y | — | Vertical screen position of the indicator. |
 | Scale | — | Size of the indicator. |
@@ -124,6 +125,8 @@ Air Build settings live in-game under **Mod Settings → Air Build**, in two sec
 ## 🧪 Finalomega Labs
 
 Air Build is a **Finalomega Labs** mod — a small, focused, standalone mod. It does not depend on any other mod. It targets **Satisfactory 1.2** on **Unreal Engine 5.6** with **SML 3.12**; its engine module is native C++.
+
+Finalomega is also the developer of the popular **Smart!** build-assist mod. Air Build is a separate, standalone project — it shares no code with Smart! and doesn't require it.
 
 ---
 

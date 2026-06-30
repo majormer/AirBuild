@@ -1,4 +1,4 @@
-<p align="center"><img src="Content/AirBuild.png" width="160" alt="Air Build logo"></p>
+<p align="center"><img src="images/AirBuild.png" width="160" alt="Air Build logo"></p>
 
 # Air Build
 
