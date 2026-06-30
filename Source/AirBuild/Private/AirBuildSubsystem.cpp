@@ -222,7 +222,7 @@ void UAirBuildSubsystem::ReadConfig()
 	IndicatorScale = C.IndicatorScale;
 	ReachCm = FMath::Clamp(ReachCm, MinReachCm, MaxReachCm);
 
-	UE_LOG(LogAirBuild, Display, TEXT("[AirBuild] ReadConfig: DefaultReach=%.1fm Min=%.1f Max=%.1f Step=%.1f"), C.DefaultReach, C.MinReach, C.MaxReach, C.ReachStep);
+	UE_LOG(LogAirBuild, Verbose, TEXT("[AirBuild] ReadConfig: DefaultReach=%.1fm Min=%.1f Max=%.1f Step=%.1f"), C.DefaultReach, C.MinReach, C.MaxReach, C.ReachStep);
 }
 
 // ---------------------------------------------------------------------------
