@@ -1,6 +1,7 @@
 #include "Config/AirBuildModConfiguration.h"
 #include "Configuration/Properties/ConfigPropertySection.h"
 #include "Configuration/Properties/ConfigPropertyBool.h"
+#include "Configuration/Properties/ConfigPropertyInteger.h"
 #include "Configuration/Properties/ConfigPropertyFloat.h"
 
 #define LOCTEXT_NAMESPACE "AirBuild"
@@ -18,6 +19,8 @@ UAirBuildModConfiguration::UAirBuildModConfiguration()
 	// -- Air Placement (floats in METERS) --
 	UConfigPropertySection* Air = CreateSection(TEXT("AirPlacement"), LOCTEXT("Sec.Air", "Air Placement"),
 		LOCTEXT("Sec.Air.TT", "How buildings float in the air while air-place mode is engaged."));
+	Air->SectionProperties.Add(TEXT("AirPlaceMode"), CreateIntegerProperty(TEXT("AirPlaceMode"), LOCTEXT("P.AirPlaceMode", "Auto Air Placement"),
+		LOCTEXT("P.AirPlaceMode.TT", "How air placement engages. 0 = Off: use the toggle key to turn it on. 1 = Always: on whenever you're building. 2 = Smart: turns on only when there's nothing within reach to snap to - aim at open sky and the building floats, aim at a surface and it snaps as normal. The toggle key still overrides per build."), 0));
 	Air->SectionProperties.Add(TEXT("DefaultReach"), CreateFloatProperty(TEXT("DefaultReach"), LOCTEXT("P.DefaultReach", "Default Reach (m)"),
 		LOCTEXT("P.DefaultReach.TT", "Distance in meters the building floats out when you engage air-place mode."), 15.f));
 	Air->SectionProperties.Add(TEXT("MinReach"), CreateFloatProperty(TEXT("MinReach"), LOCTEXT("P.MinReach", "Minimum Reach (m)"),
@@ -58,6 +61,18 @@ UConfigPropertyBool* UAirBuildModConfiguration::CreateBoolProperty(const FName& 
 	Property->DisplayName = InDisplayName;
 	Property->Tooltip = Tooltip;
 	Property->Value = Value;
+	Property->bRequiresWorldReload = false;
+	Property->bHidden = false;
+	return Property;
+}
+
+UConfigPropertyInteger* UAirBuildModConfiguration::CreateIntegerProperty(const FName& Name, const FText& InDisplayName, const FText& Tooltip, int32 Value)
+{
+	UConfigPropertyInteger* Property = CreateDefaultSubobject<UConfigPropertyInteger>(Name);
+	Property->DisplayName = InDisplayName;
+	Property->Tooltip = Tooltip;
+	Property->Value = Value;
+	Property->DefaultValue = Value;
 	Property->bRequiresWorldReload = false;
 	Property->bHidden = false;
 	return Property;

@@ -1,6 +1,6 @@
 # <img src="https://github.com/majormer/AirBuild/blob/main/images/AirBuild.png?raw=true" width="150" alt="Air Build Logo"> Air Build
 
-![Status](https://img.shields.io/badge/Status-Released-brightgreen) ![Version](https://img.shields.io/badge/Version-1.0.0-blue) ![Satisfactory](https://img.shields.io/badge/Satisfactory-1.2-blue) ![Engine](https://img.shields.io/badge/Engine-UE%205.6-blue) ![SML](https://img.shields.io/badge/SML-3.12-blue) ![Multiplayer](https://img.shields.io/badge/Multiplayer-Supported-brightgreen) ![AI Assisted Development Used](https://img.shields.io/badge/AI%20Assisted%20Development%20Used-Disclosure%20Below-blue)
+![Status](https://img.shields.io/badge/Status-Released-brightgreen) ![Version](https://img.shields.io/badge/Version-1.1.0-blue) ![Satisfactory](https://img.shields.io/badge/Satisfactory-1.2-blue) ![Engine](https://img.shields.io/badge/Engine-UE%205.6-blue) ![SML](https://img.shields.io/badge/SML-3.12-blue) ![Multiplayer](https://img.shields.io/badge/Multiplayer-Supported-brightgreen) ![AI Assisted Development Used](https://img.shields.io/badge/AI%20Assisted%20Development%20Used-Disclosure%20Below-blue)
 
 > **Multiplayer:** Air Build works in single-player and multiplayer, including dedicated servers (verified with a factory building on a Windows dedicated server).
 
@@ -39,7 +39,7 @@ All Air Build controls are **rebindable** in **Options → Keybindings → "Air 
 
 | Action | Default Key | Description |
 |---|---|---|
-| Toggle air-place mode | `-` (Minus) | Turns air placement on/off. Sticky — it stays on until you toggle it off, and resets when you leave the build gun. |
+| Toggle air-place mode | `-` (Minus) | Turns air placement on/off for the current build. With **Auto Air Placement** set to Always or Smart, this overrides that mode for the build. Resets when you leave the build gun. |
 | Adjust reach | `=` (Equals) + `Scroll Wheel` | **Hold** `=` and roll the mouse wheel to push the building further out or pull it in. Release and the reach stays where you set it. |
 | Rotate hologram | `Scroll Wheel` (no modifier) | Rotates the hologram, exactly like vanilla. |
 | Grid snap | `Ctrl` | Snaps to the world grid, exactly like vanilla. |
@@ -110,6 +110,7 @@ Air Build settings live in-game under **Mod Settings → Air Build**, in two sec
 | Minimum Reach | 2 m | The closest you can pull a building in. |
 | Maximum Reach | 200 m | The furthest you can push a building out. |
 | Reach Step | 0.5 m | How far the reach changes per wheel notch while holding `=`. |
+| Auto Air Placement | Off | How air placement engages. **Off** — use the toggle key to turn it on. **Always** — on whenever you're building. **Smart** — turns on only when there's nothing within reach to snap to: aim at open sky and the building floats, aim at a surface and it snaps like vanilla. The toggle key overrides per build in any mode. |
 
 ### Indicator
 
@@ -140,7 +141,7 @@ AI assistance does not replace community testing. Air Build is validated through
 
 ## 💬 Getting Help
 
-Air Build is **v1.0.0**. If something behaves unexpectedly, please report it on [GitHub Issues](https://github.com/majormer/AirBuild/issues) with your Satisfactory version, SML version, session type (single-player or multiplayer), and clear reproduction steps.
+Air Build is **v1.1.0**. If something behaves unexpectedly, please report it on [GitHub Issues](https://github.com/majormer/AirBuild/issues) with your Satisfactory version, SML version, session type (single-player or multiplayer), and clear reproduction steps.
 
 - **Report bugs / track issues:** https://github.com/majormer/AirBuild/issues
 - **Source:** https://github.com/majormer/AirBuild

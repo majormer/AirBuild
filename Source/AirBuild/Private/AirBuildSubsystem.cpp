@@ -137,9 +137,19 @@ void UAirBuildSubsystem::PollTick()
 	if (bHoloActive != bMainContextActive)
 	{
 		SetMainContextActive(bHoloActive);
-		if (!bHoloActive)
+		if (bHoloActive)
 		{
-			bEngaged = false;
+			// Entering a build session: refresh config + reset reach to the configured default, and clear the
+			// manual override so the session starts at the mode's default behavior.
+			ReadConfig();
+			ReachCm = FMath::Clamp(DefaultReachCm, MinReachCm, MaxReachCm);
+			bManualToggle = false;
+		}
+		else
+		{
+			// Left the build gun: stop floating and clear per-session state.
+			bFloatingNow = false;
+			bManualToggle = false;
 			if (bAdjustHeld)
 			{
 				bAdjustHeld = false;
@@ -208,21 +218,44 @@ void UAirBuildSubsystem::TryBindInput()
 void UAirBuildSubsystem::ReadConfig()
 {
 	const FAirBuild_ConfigStruct C = FAirBuild_ConfigStruct::GetActiveConfig(this);
-	DefaultReachCm = C.DefaultReach * 100.f;
-	MinReachCm     = C.MinReach * 100.f;
-	MaxReachCm     = C.MaxReach * 100.f;
-	ReachStepCm    = FMath::Max(1.f, C.ReachStep * 100.f);
+	// These sliders drag continuously (SML's slider widget doesn't expose a per-property step), so snap to a
+	// clean grid here rather than carrying odd drag-precision values into gameplay: 0.5 m for the reach
+	// bounds (so they land on whole numbers), 0.1 m for the step size.
+	const float QuantizedDefaultReach = FMath::RoundToFloat(C.DefaultReach * 2.f) / 2.f;
+	const float QuantizedMinReach     = FMath::RoundToFloat(C.MinReach * 2.f) / 2.f;
+	const float QuantizedMaxReach     = FMath::RoundToFloat(C.MaxReach * 2.f) / 2.f;
+	const float QuantizedReachStep    = FMath::RoundToFloat(C.ReachStep * 10.f) / 10.f;
+	DefaultReachCm = QuantizedDefaultReach * 100.f;
+	MinReachCm     = QuantizedMinReach * 100.f;
+	MaxReachCm     = QuantizedMaxReach * 100.f;
+	ReachStepCm    = FMath::Max(1.f, QuantizedReachStep * 100.f);
 	if (MinReachCm > MaxReachCm)
 	{
 		Swap(MinReachCm, MaxReachCm); // defend against a user setting Min > Max in the menu
 	}
+	AirPlaceMode   = C.AirPlaceMode;
 	bShowIndicator = C.bShowIndicator;
-	IndicatorPosX  = C.IndicatorPosX;
-	IndicatorPosY  = C.IndicatorPosY;
+	// The position sliders drag continuously (SML's slider widget doesn't expose a per-property step), so
+	// snap to a clean 0.01 grid here rather than carrying odd drag-precision values into the HUD.
+	IndicatorPosX  = FMath::RoundToFloat(C.IndicatorPosX * 100.f) / 100.f;
+	IndicatorPosY  = FMath::RoundToFloat(C.IndicatorPosY * 100.f) / 100.f;
 	IndicatorScale = C.IndicatorScale;
 	ReachCm = FMath::Clamp(ReachCm, MinReachCm, MaxReachCm);
 
-	UE_LOG(LogAirBuild, Verbose, TEXT("[AirBuild] ReadConfig: DefaultReach=%.1fm Min=%.1f Max=%.1f Step=%.1f"), C.DefaultReach, C.MinReach, C.MaxReach, C.ReachStep);
+	UE_LOG(LogAirBuild, Verbose, TEXT("[AirBuild] ReadConfig: Mode=%d DefaultReach=%.1fm Min=%.1f Max=%.1f Step=%.1f"), C.AirPlaceMode, C.DefaultReach, C.MinReach, C.MaxReach, C.ReachStep);
+}
+
+// Per-frame decision the hook applies. bSurfaceWithinReach = vanilla found a snap surface no farther than the
+// current reach. Modes: 0 Off (float only while toggled on), 1 Always (float unless toggled off),
+// 2 Smart (float only when there's no surface in reach, or when the toggle forces it).
+bool UAirBuildSubsystem::ResolveShouldFloat(bool bSurfaceWithinReach) const
+{
+	switch (AirPlaceMode)
+	{
+	case 1:  return !bManualToggle;
+	case 2:  return bManualToggle || !bSurfaceWithinReach;
+	default: return bManualToggle;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -264,14 +297,11 @@ void UAirBuildSubsystem::SetAdjustContextActive(bool bActive)
 void UAirBuildSubsystem::OnToggleAirPlace(const FInputActionValue& /*Value*/)
 {
 	FAirBuildHologramHook::EnsureInstalled(); // install the placement hook on first real engage
-	bEngaged = !bEngaged;
-	if (bEngaged)
-	{
-		ReadConfig();
-		ReachCm = FMath::Clamp(DefaultReachCm, MinReachCm, MaxReachCm);
-	}
-	UE_LOG(LogAirBuild, Display, TEXT("AirBuild: air-place %s (reach %.0f cm)"),
-		bEngaged ? TEXT("ENGAGED") : TEXT("off"), ReachCm);
+	// One override key across all modes: flip the per-session manual toggle. The hook's ResolveShouldFloat
+	// interprets it per mode (Off: turn float on; Always: suspend it; Smart: force float over the gap-fill).
+	bManualToggle = !bManualToggle;
+	UE_LOG(LogAirBuild, Display, TEXT("AirBuild: toggle pressed (mode %d, override %s)"),
+		AirPlaceMode, bManualToggle ? TEXT("on") : TEXT("off"));
 }
 
 void UAirBuildSubsystem::OnAdjustHoldStarted(const FInputActionValue& /*Value*/)
@@ -352,7 +382,7 @@ void UAirBuildSubsystem::EnsureHudBinding()
 
 void UAirBuildSubsystem::DrawIndicator(AHUD* /*HUD*/, UCanvas* /*Canvas*/)
 {
-	const bool bShouldShow = bShowIndicator && bEngaged && ActiveHologram.IsValid();
+	const bool bShouldShow = bShowIndicator && bFloatingNow && ActiveHologram.IsValid();
 
 	if (!Widget)
 	{

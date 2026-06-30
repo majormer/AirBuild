@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0.0",
+	"VersionName": "1.1.0",
 	"FriendlyName": "Air Build",
 	"Description": "Adds an air-placement mode to the build gun: hold a building and place it floating in the air at a camera-relative distance, with scroll-controlled reach. Vanilla placement validity is preserved (soft clipping, hard conflicts, snapping). Resource-node buildings (miners, extractors, frackers, wells) are excluded.",
 	"Category": "Modding",
@@ -29,6 +29,6 @@
 			"SemVersion": "^3.12.0"
 		}
 	],
-	"SemVersion": "1.0.0",
+	"SemVersion": "1.1.0",
 	"GameVersion": ">=491125"
 }

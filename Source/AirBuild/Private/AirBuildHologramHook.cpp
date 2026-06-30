@@ -51,28 +51,24 @@ static bool RewriteHitForAirPlace(AFGHologram* Holo, FHitResult& Hit)
 	{
 		return false;
 	}
+	UAirBuildSubsystem* State = UAirBuildSubsystem::Get(Holo);
+
 	if (FAirBuildHologramHook::IsExcludedHologram(Holo))
 	{
-		return false; // resource-node family -> vanilla snapping
+		if (State) { State->SetFloatingNow(false); }
+		return false; // resource-node family -> always vanilla snapping
 	}
 
-	// Resolve engaged + reach: CVar debug override first, else the runtime subsystem state.
-	bool bEngaged = false;
-	float ReachCm = 1500.0f;
-	UAirBuildSubsystem* State = UAirBuildSubsystem::Get(Holo);
-	if (CVarAirBuildEnabled.GetValueOnAnyThread() != 0)
-	{
-		bEngaged = true;
-		ReachCm = CVarAirBuildReach.GetValueOnAnyThread();
-	}
-	else if (State)
-	{
-		bEngaged = State->IsEngaged();
-		ReachCm = State->GetReachCm();
-	}
-	if (!bEngaged)
+	// Resolve reach: CVar debug override first, else the runtime subsystem.
+	const bool bCVarForce = CVarAirBuildEnabled.GetValueOnAnyThread() != 0;
+	if (!State && !bCVarForce)
 	{
 		return false;
+	}
+	float ReachCm = State ? State->GetReachCm() : 1500.0f;
+	if (bCVarForce)
+	{
+		ReachCm = CVarAirBuildReach.GetValueOnAnyThread();
 	}
 
 	APawn* OwningPawn = Holo->GetConstructionInstigator();
@@ -83,6 +79,7 @@ static bool RewriteHitForAirPlace(AFGHologram* Holo, FHitResult& Hit)
 		{
 			UE_LOG(LogAirBuild, Warning, TEXT("[AirBuild] holo %s has no construction instigator; cannot air-place."), *GetNameSafe(Holo));
 		}
+		if (State) { State->SetFloatingNow(false); }
 		return false;
 	}
 
@@ -92,6 +89,26 @@ static bool RewriteHitForAirPlace(AFGHologram* Holo, FHitResult& Hit)
 
 	const FVector Dir = ViewRot.Vector();
 	const float Reach = FMath::Clamp(ReachCm, SAB_MinReach, SAB_MaxReach);
+
+	// Per-frame float decision. CVar always floats (debug). Otherwise the mode decides: Smart floats only when
+	// vanilla found NO snap surface within the current reach (open sky); Off/Always ignore the surface and key
+	// off the manual toggle. The incoming Hit is vanilla's raw trace, evaluated BEFORE snapping runs in scope().
+	bool bShouldFloat;
+	if (bCVarForce)
+	{
+		bShouldFloat = true;
+	}
+	else
+	{
+		const bool bSurfaceWithinReach = Hit.bBlockingHit && (FVector::Dist(ViewLoc, Hit.ImpactPoint) <= Reach);
+		bShouldFloat = State->ResolveShouldFloat(bSurfaceWithinReach);
+	}
+	if (State) { State->SetFloatingNow(bShouldFloat); }
+	if (!bShouldFloat)
+	{
+		return false; // let vanilla place/snap (or show nothing) this frame
+	}
+
 	const FVector Target = ViewLoc + Dir * Reach;
 
 	Hit.bBlockingHit = true;
@@ -266,9 +283,9 @@ void FAirBuildHologramHook::InstallHook()
 				return;
 			}
 			UAirBuildSubsystem* State = UAirBuildSubsystem::Get(self);
-			if (!State || !State->IsEngaged())
+			if (!State || !State->IsFloatingNow())
 			{
-				return; // not air-placing -> vanilla floor validity stands
+				return; // not floating this frame -> vanilla floor validity stands (incl. Smart-snap frames)
 			}
 			if (FAirBuildHologramHook::IsExcludedHologram(self))
 			{

@@ -19,6 +19,7 @@ USTRUCT(BlueprintType)
 struct FAirBuild_AirPlacementSection
 {
 	GENERATED_BODY()
+	UPROPERTY(BlueprintReadWrite) int32 AirPlaceMode{0};     // 0 = Off (manual), 1 = Always, 2 = Smart (gap-fill)
 	UPROPERTY(BlueprintReadWrite) float DefaultReach{15.f};  // meters
 	UPROPERTY(BlueprintReadWrite) float MinReach{2.f};       // meters
 	UPROPERTY(BlueprintReadWrite) float MaxReach{200.f};     // meters
@@ -50,6 +51,7 @@ struct FAirBuild_ConfigStruct
 {
 	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadWrite) int32 AirPlaceMode{0};
 	UPROPERTY(BlueprintReadWrite) float DefaultReach{15.f};
 	UPROPERTY(BlueprintReadWrite) float MinReach{2.f};
 	UPROPERTY(BlueprintReadWrite) float MaxReach{200.f};
@@ -79,6 +81,7 @@ struct FAirBuild_ConfigStruct
 			}
 		}
 
+		Config.AirPlaceMode    = Sections.AirPlacement.AirPlaceMode;
 		Config.DefaultReach    = Sections.AirPlacement.DefaultReach;
 		Config.MinReach        = Sections.AirPlacement.MinReach;
 		Config.MaxReach        = Sections.AirPlacement.MaxReach;

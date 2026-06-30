@@ -14,8 +14,8 @@ class UCanvas;
 
 /**
  * Client-only per-world owner of Air Build's runtime state. Single source of truth shared by:
- *  - the Enhanced Input handlers (writers of bEngaged / ReachCm / bAdjustHeld),
- *  - the hologram hook (reads bEngaged + ReachCm; writes the HUD-computed distances),
+ *  - the Enhanced Input handlers (writers of bManualToggle / ReachCm / bAdjustHeld),
+ *  - the hologram hook (reads the mode + reach, writes bFloatingNow + the HUD-computed distances),
  *  - the HUD indicator draw (reads everything).
  * A UWorldSubsystem input/state hub. Never replicated; the state is
  * a purely local placement/preview concern, so the subsystem is not created on a dedicated server.
@@ -35,9 +35,13 @@ public:
 	/** Resolve the subsystem from any world-context object (e.g. the active hologram). */
 	static UAirBuildSubsystem* Get(const UObject* WorldContext);
 
-	bool IsEngaged() const { return bEngaged; }
+	bool IsFloatingNow() const { return bFloatingNow; }
 	float GetReachCm() const { return ReachCm; }
 	bool IsAdjustHeld() const { return bAdjustHeld; }
+
+	/** Per-frame float decision applied by the hook: mode + manual override + whether a surface is within reach. */
+	bool ResolveShouldFloat(bool bSurfaceWithinReach) const;
+	void SetFloatingNow(bool bFloating) { bFloatingNow = bFloating; }
 
 	/** Called by the hook every frame a NON-EXCLUDED hologram is active (freshness signal that scopes the keybind context). */
 	void NotifyHologramActive(AFGHologram* Holo);
@@ -54,7 +58,8 @@ public:
 
 private:
 	// --- live state ---
-	bool bEngaged = false;
+	bool bManualToggle = false;  // the toggle-key override; reset to the mode default on build entry, flipped by the key
+	bool bFloatingNow = false;   // per-frame: did the hook air-place this frame (drives the HUD + uneven-floor exception)
 	bool bAdjustHeld = false;
 	float ReachCm = 1500.f;
 
@@ -63,6 +68,7 @@ private:
 	float MinReachCm = 200.f;
 	float MaxReachCm = 8000.f;
 	float ReachStepCm = 200.f;
+	int32 AirPlaceMode = 0;            // 0 = Off (manual toggle), 1 = Always, 2 = Smart (gap-fill)
 	bool bShowIndicator = true;
 	float IndicatorPosX = 0.5f;
 	float IndicatorPosY = 0.45f;

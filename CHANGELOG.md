@@ -13,6 +13,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-06-30
+
+> *Smarter air placement, a friendlier config menu, and a fix for settings not saving.*
+
+### Added
+
+- **Auto Air Placement modes** — A new **Auto Air Placement** setting controls how air-place engages, so you don't always have to reach for the toggle key:
+  - **Off** (default) — unchanged from 1.0.0: press the toggle key to turn air-place on for a build.
+  - **Always** — air-place is on automatically whenever you're holding a buildable; the toggle key suspends it for that build.
+  - **Smart** — air-place engages only when there's nothing within reach to snap to: aim at the ground or an existing building and it places or snaps normally, aim at open sky and it floats out at your reach. The toggle key still overrides per build in any mode.
+- **World height on the indicator** — alongside Distance, Ground, and Reach, the indicator now also shows the building's absolute height in the world.
+- **Ground readout works at any height** — previously capped near 100 m, it now reads correctly even when air-placing very high up.
+
+### Changed
+
+- **Config menu is friendlier to use** — Auto Air Placement is now a real dropdown (Off / Always / Smart) instead of a plain number. Every Air Placement and Indicator value can now be typed in directly, not just dragged.
+- **Reach and indicator position values round to a clean increment once applied** — 0.5 m for the reach settings, 0.1 m for Reach Step, 0.01 for the indicator position — even if a drag lands on an odd number in between.
+- **Support button now opens Discord** instead of Ko-Fi (Ko-Fi remains the donation link).
+
+### Fixed
+
+- **Settings changes weren't saving** — changing a value in the Mods menu (e.g. Default Reach) could silently fail to persist, so the mod kept using the old value. Menu changes now save correctly.
+- **In-game mod icon wasn't showing** — Air Build was missing a packaging step needed for its icon to appear in the in-game mods list. The icon now shows correctly.
+
+---
+
 ## [1.0.0] - 2026-06-29
 
 > *First release. A Finalomega Labs mod, built from an idea suggested by **MovedToStoat** — a vanilla-friendly way to drop a building into mid-air without endless nudging. Hold a building on the build gun, flip on air-place, and float it out along your aim line at a distance you control — instead of spamming the vanilla nudge keys to lift it into place. Standalone and self-contained; it does **not** depend on any other mod.*
