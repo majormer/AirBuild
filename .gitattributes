@@ -1,0 +1,24 @@
+# Standardize line endings on LF for all text files, both in the repository and
+# on checkout (every platform). Git auto-detects text vs binary; the binary
+# patterns below are never normalized, which matters for Unreal Engine assets.
+
+* text=auto eol=lf
+
+# Unreal Engine assets — always binary, never normalize line endings
+*.uasset  binary
+*.umap    binary
+*.uexp    binary
+*.ubulk   binary
+*.locres  binary
+*.locmeta binary
+*.archive binary
+*.pak     binary
+
+# Images / fonts / media
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.ttf  binary
+*.otf  binary

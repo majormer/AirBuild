@@ -1,0 +1,79 @@
+# Unreal / Satisfactory Mod Loader build outputs
+Binaries/
+Build/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# Local-only workspace/editor state
+.vs/
+.vscode/
+.idea/
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+*.xcodeproj
+*.xcworkspace
+*.code-workspace
+
+# Local config and secrets
+.env
+.env.*
+!.env.example
+.local/
+
+# Logs and temporary files
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+
+# Packaged artifacts
+*.zip
+*.pak
+*.paket
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# AI agent instructions — development-only, never published
+AGENTS.md
+
+# =============================================================================
+# AI / IDE Workflow Files (Development-Only)
+# =============================================================================
+.windsurf/
+.playwright-mcp/
+mcp.json
+.mcp.json
+.cursor/
+.aider*
+.continue/
+.codeium/
+.claude/
+.gemini/
+.cascade/
+.taskmaster/
+
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Session-specific notes and drafts
+*.session.md
+session-notes/
+message*.txt
