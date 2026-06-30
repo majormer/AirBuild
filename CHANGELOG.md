@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0] - 2026-06-30
 
-> *Smarter air placement, a friendlier config menu, and a fix for settings not saving.*
+> *Smarter air placement, a friendlier config menu, and a fix for the missing mod icon.*
 
 ### Added
 
@@ -34,7 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **Settings changes weren't saving** — changing a value in the Mods menu (e.g. Default Reach) could silently fail to persist, so the mod kept using the old value. Menu changes now save correctly.
 - **In-game mod icon wasn't showing** — Air Build was missing a packaging step needed for its icon to appear in the in-game mods list. The icon now shows correctly.
 
 ---
